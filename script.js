@@ -18,11 +18,11 @@ function saveTasksToLocalStorage() {
 function downloadLocalStorage() {
   const saved = localStorage.getItem("todoTasks");
   if (saved) {
-    tasks = JSON.parse(sawed);
+    tasks = JSON.parse(saved);
     renderAllTasks();
   }
 }
-
+downloadLocalStorage();
 // API
 
 // Фильтр
