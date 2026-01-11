@@ -23,13 +23,49 @@ function downloadLocalStorage() {
   }
 }
 
+// Фильтр
+filterBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+    renderAllTasks();
+  });
+});
+
+// Обработчик клика на чекбокс и кнопки
+taskList.addEventListener("click", function (event) {
+  const targetLi = event.target.closest(".task-item");
+  if (!targetLi) return;
+  const taskId = targetLi.dataset.id;
+  const targetTask = tasks.find((t) => t.id == taskId);
+
+  if (event.target.classList.contains("task-checkbox")) {
+    targetTask.completed = !targetTask.completed;
+    saveTasksToLocalStorage();
+    renderAllTasks();
+  } else if (event.target.classList.contains("reminder-btn")) {
+    const seconds = parseInt(prompt("Через сколько секунд напомнить?"));
+    if (isNaN(seconds) || seconds <= 0) {
+      alert("Неверное значение!");
+    }
+    setTimeout(() => {
+      alert(`Вы собирались сделать: ${targetTask.text}`);
+    }, seconds * 1000);
+  } else if (event.target.classList.contains("delete-btn")) {
+    let indexDelTask = tasks.findIndex((task) => task.id == taskId);
+    tasks.splice(indexDelTask, 1);
+    saveTasksToLocalStorage();
+    renderAllTasks();
+  }
+});
+
 // Рендерим пункт + обрабатываем complete
 function renderTask(task) {
+  console.log("renderTask вызван для:", task.text);
   let taskElement = document.createElement("li");
   taskElement.className = "task-item";
+  taskElement.dataset.id = task.id;
 
   let inputCheck = document.createElement("input");
-  inputCheck.dataset.id = task.id;
   inputCheck.className = "task-checkbox";
   taskElement.append(inputCheck);
   inputCheck.type = "checkbox";
@@ -56,37 +92,12 @@ function renderTask(task) {
     reminderButton.style.display = "none";
   }
 
-  // Фильтр (попробовать потом реализовать через делегирование событий)
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      currentFilter = btn.dataset.filter;
-      renderAllTasks();
-    });
-  });
-
-  inputCheck.addEventListener("click", function () {
-    let checkedTask = tasks.find((task) => {
-      return task.id == this.dataset.id;
-    });
-    checkedTask.completed = !checkedTask.completed;
-    saveTasksToLocalStorage();
-    renderAllTasks();
-  });
-
-  delButton.addEventListener("click", function () {
-    let deletedTask = tasks.find((task) => {
-      return task.id == this.dataset.id;
-    });
-    let indexDelTask = tasks.findIndex((task) => task.id == this.dataset.id);
-    tasks.splice(indexDelTask, 1);
-    renderAllTasks();
-  });
-
   taskList.append(taskElement);
 }
 
 // Рендерим все пункты скопом
 function renderAllTasks() {
+  console.log("renderAllTasks вызван, tasks.length =", tasks.length);
   taskList.innerHTML = "";
   for (let task of tasks) {
     if (currentFilter == "completed" && !task.completed) continue;
