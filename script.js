@@ -1,12 +1,12 @@
 // Buttons
 let buttonAdd = document.getElementById("add-btn");
 let filterBtns = document.querySelectorAll(".filter-btn");
+console.log(document.querySelector(".filter-btn"));
 
 // Other
 let taskInput = document.getElementById("task-input");
 let taskList = document.getElementById("task-list");
 
-let userTask = taskInput.value;
 let tasks = [];
 let currentFilter = "all";
 
@@ -23,9 +23,13 @@ function downloadLocalStorage() {
   }
 }
 
+// API
+
 // Фильтр
 filterBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
+    filterBtns.forEach((button) => button.classList.remove("active"));
+    btn.classList.add("active");
     currentFilter = btn.dataset.filter;
     renderAllTasks();
   });
