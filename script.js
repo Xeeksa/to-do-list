@@ -123,6 +123,7 @@ buttonAdd.addEventListener("click", () => {
       alert("Вы уже добавили этот пункт");
     } else {
       tasks.push(aboutTask);
+      saveTasksToLocalStorage();
       renderAllTasks();
       taskInput.value = "";
     }
