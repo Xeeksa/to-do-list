@@ -1,7 +1,6 @@
 // Buttons
 let buttonAdd = document.getElementById("add-btn");
 let filterBtns = document.querySelectorAll(".filter-btn");
-console.log(document.querySelector(".filter-btn"));
 
 // Other
 let taskInput = document.getElementById("task-input");
@@ -22,8 +21,47 @@ function downloadLocalStorage() {
     renderAllTasks();
   }
 }
-downloadLocalStorage();
+
 // API
+
+function loadTasksFromAPI() {
+  fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Ошибка сети");
+      }
+      return response.json();
+    })
+    .then((apiTasks) => {
+      const firstTen = apiTasks.slice(0, 10);
+
+      firstTen.forEach((apiTask) => {
+        const ourTask = {
+          id: apiTask.id,
+          text: apiTask.title,
+          completed: apiTask.completed,
+          reminder: false,
+        };
+
+        tasks.push(ourTask);
+      });
+
+      saveTasksToLocalStorage();
+      renderAllTasks();
+    })
+    .catch((error) => {
+      console.error("Не удалось загрузить задачи с сервераЖ", error);
+    });
+}
+
+function init() {
+  downloadLocalStorage();
+  if (tasks.length === 0) {
+    loadTasksFromAPI();
+  }
+}
+
+init();
 
 // Фильтр
 filterBtns.forEach((btn) => {
@@ -64,7 +102,6 @@ taskList.addEventListener("click", function (event) {
 
 // Рендерим пункт + обрабатываем complete
 function renderTask(task) {
-  console.log("renderTask вызван для:", task.text);
   let taskElement = document.createElement("li");
   taskElement.className = "task-item";
   taskElement.dataset.id = task.id;
@@ -101,7 +138,6 @@ function renderTask(task) {
 
 // Рендерим все пункты скопом
 function renderAllTasks() {
-  console.log("renderAllTasks вызван, tasks.length =", tasks.length);
   taskList.innerHTML = "";
   for (let task of tasks) {
     if (currentFilter == "completed" && !task.completed) continue;
