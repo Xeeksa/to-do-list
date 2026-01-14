@@ -25,7 +25,7 @@ function downloadLocalStorage() {
 // API
 
 function loadTasksFromAPI() {
-  fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+  fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Ошибка сети");
@@ -33,9 +33,7 @@ function loadTasksFromAPI() {
       return response.json();
     })
     .then((apiTasks) => {
-      const firstTen = apiTasks.slice(0, 10);
-
-      firstTen.forEach((apiTask) => {
+      apiTasks.forEach((apiTask) => {
         const ourTask = {
           id: apiTask.id,
           text: apiTask.title,
@@ -50,7 +48,7 @@ function loadTasksFromAPI() {
       renderAllTasks();
     })
     .catch((error) => {
-      console.error("Не удалось загрузить задачи с сервераЖ", error);
+      console.error("Не удалось загрузить задачи с сервера", error);
     });
 }
 
@@ -88,6 +86,7 @@ taskList.addEventListener("click", function (event) {
     const seconds = parseInt(prompt("Через сколько секунд напомнить?"));
     if (isNaN(seconds) || seconds <= 0) {
       alert("Неверное значение!");
+      return;
     }
     setTimeout(() => {
       alert(`Вы собирались сделать: ${targetTask.text}`);
@@ -110,25 +109,29 @@ function renderTask(task) {
   inputCheck.className = "task-checkbox";
   taskElement.append(inputCheck);
   inputCheck.type = "checkbox";
+  inputCheck.checked = task.completed;
 
   let textTask = document.createElement("span");
   textTask.className = "task-text";
   textTask.textContent = task.text;
   taskElement.append(textTask);
 
+  let blockOfButtons = document.createElement("div");
+  blockOfButtons.className = "block-of-buttons";
+  taskElement.append(blockOfButtons);
+
   let reminderButton = document.createElement("button");
   reminderButton.className = "reminder-btn";
   reminderButton.textContent = "Напомнить";
-  taskElement.append(reminderButton);
+  blockOfButtons.append(reminderButton);
 
   let delButton = document.createElement("button");
   delButton.dataset.id = task.id;
   delButton.className = "delete-btn";
   delButton.textContent = "Удалить";
-  taskElement.append(delButton);
+  blockOfButtons.append(delButton);
 
-  if (task.completed === true) {
-    inputCheck.checked = true;
+  if (task.completed) {
     taskElement.classList.add("completed");
     reminderButton.style.display = "none";
   }

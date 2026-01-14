@@ -87,20 +87,15 @@ h1 {
     flex: 1;
 }
 
-.task-actions button {
-    margin-left: 5px;
+.block-of-buttons button {
+    margin-right: 5px;
     padding: 5px 10px;
-    border: none;
     border-radius: 5px;
-    cursor: pointer;
+    border: 1px solid gray;
 }
 
 .reminder-btn {
     background-color: yellowgreen;
-    margin-right: 5px;
-    padding: 5px 10px;
-    border: 1px solid gray;
-    border-radius: 5px;
 }
 
 .reminder-btn:hover {
@@ -112,9 +107,6 @@ h1 {
     background-color: deeppink;
     margin-left: 5px;
     margin-right: -5px;
-    padding: 5px 10px;
-    border: 1px solid gray;
-    border-radius: 5px;
     color: white;
 }
 
